@@ -38,6 +38,7 @@ process drop_genotypes {
 process minGQ_filter {
 
   tag "sampleID"
+  publishDir "${params.outdir}/subset", mode: 'copy'
   
   input:
   tuple val(sampleID), file(vcf), file(index) from drop_geno_ch
