@@ -1,11 +1,8 @@
 #!/usr/bin/env nextflow
 
-nextflow.enable.dsl=2
-
 /* 
  * Set up variables
  */
-
 
 Channel
       .fromPath(params.vcf_list)
@@ -15,23 +12,21 @@ Channel
       .take( params.number_of_files_to_process )
       .set { vcf_input }
 
-workflow {
-  drop_genotypes( vcf_input )
-  AF_filter( drop_genotypes.out )
-
-}
+/*
+ * Start pipeline
+ */
 
 process drop_genotypes {
-  
+
   tag "$sampleID"
 
-  input:
-  tuple val(sampleID), file(vcf), file(index)
+   input:
+   tuple val(sampleID), file(vcf), file(index) from vcf_input
 
-  output:
-  tuple val(sampleID), file("*_sites.vcf.gz"), file("*_sites.vcf.gz.csi")
+   output:
+   tuple val(sampleID), file("*_sites.vcf.gz"), file("*_sites.vcf.gz.csi") into drop_geno_ch
 
-  script:
+   script:
 
    """
    bcftools view -G -O z -o ${sampleID}_sites.vcf.gz ${vcf} 
@@ -45,10 +40,10 @@ process minGQ_filter {
   tag "sampleID"
   
   input:
-  tuple val(sampleID), file(vcf), file(index)
+  tuple val(sampleID), file(vcf), file(index) from drop_geno_ch
 
   output:
-  file("*_minGQ.tsv") 
+  file("*_minGQ.tsv") into minGQ_filtered_ch
 
   script:
 
@@ -56,4 +51,3 @@ process minGQ_filter {
   bcftools query -i 'minGQ < 30' -f '%CHROM\t%POS\t%REF\t%ALT\t%minGQ\n' ${vcf} > ${sampleID}_minGQ.tsv
   """
 }
-
