@@ -48,7 +48,7 @@ process minGQ_filter {
   tuple val(sampleID), file(vcf), file(index)
 
   output:
-  file("*_maf02.tsv") 
+  file("*_minGQ.tsv") 
 
   script:
 
