@@ -48,6 +48,6 @@ process minGQ_filter {
   script:
 
   """
-  bcftools query -i 'minGQ < 30' -f '%CHROM\t%POS\t%REF\t%ALT\t%minGQ\n' ${vcf} > ${sampleID}_minGQ.tsv
+  bcftools query -i "'minGQ < 30'" -f "'%CHROM\t%POS\t%REF\t%ALT\t%minGQ\n'" ${vcf} > ${sampleID}_minGQ.tsv
   """
 }
