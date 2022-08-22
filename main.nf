@@ -49,6 +49,6 @@ process minGQ_filter {
   script:
 
   """
-  bcftools query -i "'medianGQ < 80'" -f "'%CHROM\t%POS\t%REF\t%ALT\t%medianGQ\n'" ${vcf} > ${sampleID}_minGQ.tsv
+  bcftools query -i 'medianGQ < 80' -f '[%CHROM\t%POS\t%REF\t%ALT\t%medianGQ\n]' ${vcf} > ${sampleID}_minGQ.tsv
   """
 }
