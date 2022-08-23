@@ -35,7 +35,7 @@ process drop_genotypes {
 
 }
 
-process minGQ_filter {
+process medianGQ_filter {
 
   tag "sampleID"
   publishDir "${params.outdir}/subset", mode: 'copy'
@@ -44,11 +44,11 @@ process minGQ_filter {
   tuple val(sampleID), file(vcf), file(index) from drop_geno_ch
 
   output:
-  file("*_minGQ.tsv") into minGQ_filtered_ch
+  file("*_medianGQ.tsv") into medianGQ_filtered_ch
 
   script:
 
   """
-  bcftools query -i 'medianGQ < 30' -f '%CHROM\t%POS\t%REF\t%ALT\t%medianGQ\n' ${vcf} > ${sampleID}_minGQ.tsv
+  bcftools query -i 'medianGQ > 30' -f '%CHROM\t%POS\t%REF\t%ALT\t%medianGQ\n' ${vcf} > ${sampleID}_medianGQ.tsv
   """
 }
